@@ -54,7 +54,7 @@ object AppModule {
             val original: Request = chain.request()
             val requestBuilder: Request.Builder = original.newBuilder()
                 .addHeader("accept", "application/json")
-                .header("Authorization", "Bearer ${Constant.TOKEN}")
+                .header("x-api-key", Constant.API_KEY)
             val request: Request = requestBuilder.build()
             chain.proceed(request)
         }
