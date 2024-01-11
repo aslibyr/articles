@@ -12,7 +12,14 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 
 
 fun Context.loadJSONFromAssets(fileName: String): String {
@@ -27,6 +34,17 @@ fun Context.openChrome(url: String) {
         Uri.parse(url)
     )
     this.startActivity(urlIntent)
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavController
+): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel(parentEntry)
 }
 
 fun restartApp(context: Context) {

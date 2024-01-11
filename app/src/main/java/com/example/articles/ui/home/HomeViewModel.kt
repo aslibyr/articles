@@ -9,24 +9,26 @@ import com.example.articles.domain.usecase.GetArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val getArticlesUseCase: GetArticlesUseCase) : ViewModel(){
+class HomeViewModel @Inject constructor(private val getArticlesUseCase: GetArticlesUseCase) :
+    ViewModel() {
 
     private val _articles = MutableStateFlow<BaseUIModel<List<ArticleUIModel>>>(Loading())
-    val articles : StateFlow<BaseUIModel<List<ArticleUIModel>>> get() = _articles
+    val articles: StateFlow<BaseUIModel<List<ArticleUIModel>>> get() = _articles
+
+    var article: ArticleUIModel? = null
 
     init {
         getArticles()
 
     }
 
-    private fun getArticles(){
+    private fun getArticles() {
         viewModelScope.launch {
-            getArticlesUseCase.invoke().collect{
+            getArticlesUseCase.invoke().collect {
                 _articles.emit(it)
             }
         }

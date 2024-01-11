@@ -6,11 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.articles.ui.home.HomeScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.example.articles.utils.ScreenRoutes
 import com.example.articles.utils.theme.ArticlesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,12 +19,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArticlesTheme {
-                // A surface container using the 'background' color from the theme
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen()
+                    NavHost(
+                        navController = navController,
+                        startDestination = ScreenRoutes.HOST_ROUTE
+                    ) {
+                        mainGraph(navController)
+                    }
                 }
             }
         }
