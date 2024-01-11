@@ -2,9 +2,22 @@ package com.example.articles.utils.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.sp
+import com.example.articles.R
+
+class FontType {
+    companion object {
+        val workSansBold = Font(R.font.worksans_bold, FontWeight.Bold).toFontFamily()
+        val workSansDisplay = Font(R.font.worksans_display, FontWeight.Light).toFontFamily()
+        val workSansExtraBold = Font(R.font.worksans_extrabold, FontWeight.ExtraBold).toFontFamily()
+        val workSansMedium = Font(R.font.worksans_medium, FontWeight.Medium).toFontFamily()
+        val workSansRegular = Font(R.font.worksans_regular, FontWeight.Black).toFontFamily()
+    }
+}
 
 // Set of Material typography styles to start with
 val Typography = Typography(

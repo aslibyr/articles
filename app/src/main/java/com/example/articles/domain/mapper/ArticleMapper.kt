@@ -4,10 +4,10 @@ import com.example.articles.data.model.ArticleResponse
 
 fun ArticleResponse.toUIModel() : ArticleUIModel{
     return ArticleUIModel(
-        author = author.toString(),
+        author = author,
         title = title.toString(),
         description = description.toString(),
-        url = url.toString(),
+        url = url,
         urlToImage = urlToImage,
         publishedAt = publishedAt.toString(),
         content = content.toString(),
@@ -18,10 +18,10 @@ fun ArticleResponse.toUIModel() : ArticleUIModel{
 
 
 data class ArticleUIModel(
-    val author: String,
+    val author: String? = null,
     val title: String,
     val description: String,
-    val url: String,
+    val url: String? = null,
     val urlToImage: String? = null,
     val publishedAt: String,
     val content: String,

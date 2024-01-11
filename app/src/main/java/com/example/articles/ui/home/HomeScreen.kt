@@ -96,7 +96,9 @@ fun ArticleItem(article: ArticleUIModel, articleClicked: () -> Unit) {
                 )
             }
             Text(text = article.title)
-            Text(text = article.author)
+            article.author?.let {
+                Text(text = it)
+            }
             Text(text = article.publishedAt)
 
         }
