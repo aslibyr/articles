@@ -19,11 +19,10 @@ import com.example.articles.R
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
 import com.example.articles.domain.mapper.ArticleUIModel
-import com.example.articles.ui.home.HomeViewModel
 import com.example.articles.utils.theme.FontType
 
 @Composable
-fun DetailScreen(viewModel: HomeViewModel, onBackClick: () -> Unit) {
+fun DetailScreen(viewModel: DetailViewModel, onBackClick: () -> Unit) {
     val article = viewModel.article
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarView(

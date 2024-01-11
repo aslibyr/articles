@@ -9,8 +9,7 @@ interface WebService {
     @GET("top-headlines")
     suspend fun getArticles(
         @Query("country") country: String = "us",
-        @Query("category") category: String = "sports"
+        @Query("category") category: String
     ): BaseResponse
-
 
 }

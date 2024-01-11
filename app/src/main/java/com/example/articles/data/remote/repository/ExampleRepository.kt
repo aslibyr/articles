@@ -8,5 +8,5 @@ import javax.inject.Inject
 class ExampleRepository @Inject constructor(
     private val exampleDataSource: ExampleDataSource
 ) {
-    suspend fun getArticles() : ResultWrapper<BaseResponse> = exampleDataSource.getArticles()
+    suspend fun getArticles(categoryId : String) : ResultWrapper<BaseResponse> = exampleDataSource.getArticles(categoryId)
 }

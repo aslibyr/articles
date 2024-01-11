@@ -1,8 +1,11 @@
 package com.example.articles.ui.home
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.articles.domain.BaseUIModel
+import com.example.articles.domain.Default
 import com.example.articles.domain.Loading
 import com.example.articles.domain.mapper.ArticleUIModel
 import com.example.articles.domain.usecase.GetArticlesUseCase
@@ -19,17 +22,12 @@ class HomeViewModel @Inject constructor(private val getArticlesUseCase: GetArtic
     private val _articles = MutableStateFlow<BaseUIModel<List<ArticleUIModel>>>(Loading())
     val articles: StateFlow<BaseUIModel<List<ArticleUIModel>>> get() = _articles
 
-    var article: ArticleUIModel? = null
 
-    init {
-        getArticles()
-
-    }
-
-    private fun getArticles() {
+     fun getArticles(categoryId : String) {
         viewModelScope.launch {
-            getArticlesUseCase.invoke().collect {
-                _articles.emit(it)
+            if (_articles.value is Loading)
+            getArticlesUseCase.invoke(categoryId).collect { articles ->
+                _articles.emit(articles)
             }
         }
     }

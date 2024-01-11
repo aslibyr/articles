@@ -87,12 +87,12 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
-    implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
-
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-compiler:2.48.1")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
+
 
     // networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
