@@ -80,7 +80,7 @@ fun TopBarView(
                             onEndIconClick()
                         }
                         .align(Alignment.TopEnd),
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }

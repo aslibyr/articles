@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -19,18 +22,26 @@ import com.example.articles.R
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
 import com.example.articles.domain.mapper.ArticleUIModel
+import com.example.articles.utils.openChrome
 import com.example.articles.utils.theme.FontType
 
 @Composable
 fun DetailScreen(viewModel: DetailViewModel, onBackClick: () -> Unit) {
     val article = viewModel.article
+    val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarView(
             model = TopBarComponentUIModel(
                 title = "Article Detail",
-                shouldShowBackIcon = true
+                shouldShowBackIcon = true,
+                endIcon = Icons.Filled.IosShare
             ),
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onEndIconClick = {
+                article?.url?.let { url ->
+                    context.openChrome(url)
+                }
+            }
         )
         article?.let {
             ArticleDetailUI(article = it)
