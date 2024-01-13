@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.IosShare
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +34,7 @@ fun DetailScreen(viewModel: DetailViewModel, onBackClick: () -> Unit) {
             model = TopBarComponentUIModel(
                 title = "Article Detail",
                 shouldShowBackIcon = true,
-                endIcon = Icons.Filled.IosShare
+                endIcon = if (article?.url.isNullOrEmpty()) null else Icons.Filled.Link
             ),
             onBackClick = onBackClick,
             onEndIconClick = {

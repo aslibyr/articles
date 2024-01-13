@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,7 +48,7 @@ fun TopBarView(
         ) {
             if (model.shouldShowBackIcon) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack, "",
+                    imageVector = Icons.Filled.NavigateBefore, "",
                     modifier = Modifier
                         .size(34.dp)
                         .padding(start = 16.dp, top = 16.dp)
