@@ -1,5 +1,7 @@
 package com.example.articles.ui
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,9 +22,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private lateinit var sharedPref: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
         setContent {
             ArticlesTheme {
                 val navController = rememberNavController()
@@ -52,44 +56,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    fun getSelectedCountry(key: String): String? {
+        return sharedPref.getString(key, "tr")
+    }
+
+    fun setSelectedCountry(key: String,value : String) {
+        sharedPref.edit().putString(key, value).commit()
+    }
 }
-
-fun getTabList() : List<TabItemModel> {
-    return arrayListOf(
-        TabItemModel(
-            "Genel",
-            "general"
-        ),
-        TabItemModel(
-            "Spor",
-            "sports"
-        ),
-        TabItemModel(
-            "Teknoloji",
-            "technology"
-        ),
-        TabItemModel(
-            "Sağlık",
-            "health"
-        ),
-        TabItemModel(
-            "Eğlence",
-            "entertainment"
-        ),
-        TabItemModel(
-            "Bilim",
-            "science"
-        ),
-        TabItemModel(
-            "Ticari",
-            "business"
-        ),
-
-    )
-}
-
-data class TabItemModel(
-    val title : String,
-    val id : String
-)
 

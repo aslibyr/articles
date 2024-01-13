@@ -10,7 +10,7 @@ import javax.inject.Inject
 class ExampleDataSource @Inject constructor(
     private val webService: WebService
 ) {
-    suspend fun getArticles(categoryId : String) : ResultWrapper<BaseResponse> = safeApiCall(Dispatchers.IO){
-        webService.getArticles(category = categoryId)
+    suspend fun getArticles(country:String,categoryId : String) : ResultWrapper<BaseResponse> = safeApiCall(Dispatchers.IO){
+        webService.getArticles(country = country,category = categoryId)
     }
 }

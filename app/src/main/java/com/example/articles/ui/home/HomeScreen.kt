@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Filter
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.articles.R
+import com.example.articles.custom.bottom_sheet.BottomModalSheet
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
 import com.example.articles.domain.Default
@@ -42,16 +45,45 @@ import com.example.articles.domain.Error
 import com.example.articles.domain.Loading
 import com.example.articles.domain.Success
 import com.example.articles.domain.mapper.ArticleUIModel
-import com.example.articles.ui.TabItemModel
-import com.example.articles.ui.getTabList
+import com.example.articles.ui.MainActivity
+import com.example.articles.utils.Constant
+import com.example.articles.utils.findActivity
+import com.example.articles.utils.getCountryList
+import com.example.articles.utils.getTabList
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
 
 
+    val context = LocalContext.current
     val tabItems = getTabList()
+
     var tabIndex by rememberSaveable {
         mutableIntStateOf(0)
+    }
+    var selectedCountry by rememberSaveable {
+        mutableStateOf((context.findActivity() as MainActivity).getSelectedCountry(Constant.SELECTED_COUNTRY))
+    }
+
+    var showBottomSheet by rememberSaveable {
+        mutableStateOf(false)
+    }
+    if (showBottomSheet) {
+        BottomModalSheet(
+            onDismissRequest = {
+            showBottomSheet = false
+        },
+            items = getCountryList(),
+            itemClicked = { selected ->
+            selectedCountry = selected
+            (context.findActivity() as MainActivity).setSelectedCountry(
+                Constant.SELECTED_COUNTRY,
+                selected
+            )
+        },
+            selectedCountry = selectedCountry
+        )
     }
 
     Column(
@@ -62,8 +94,12 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
         TopBarView(
             model = TopBarComponentUIModel(
                 title = "Articles",
-                shouldShowBackIcon = false
-            )
+                shouldShowBackIcon = false,
+                endIcon = Icons.Default.Filter,
+            ),
+            onEndIconClick = {
+                showBottomSheet = !showBottomSheet
+            }
         )
         ScrollableTabRow(selectedTabIndex = tabIndex) {
             tabItems.forEachIndexed { index, item ->
@@ -73,8 +109,7 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
                 )
             }
         }
-
-        ArticleTab(tabId = tabItems[tabIndex].id, articleClicked = articleClicked)
+      ArticleTab(tabId = tabItems[tabIndex].id, articleClicked = articleClicked, selectedCountry = selectedCountry)
     }
 
 }
@@ -82,13 +117,14 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
 @Composable
 fun ArticleTab(
     tabId: String,
+    selectedCountry : String?,
     viewModel: HomeViewModel = hiltViewModel(key = tabId),
     articleClicked: (ArticleUIModel) -> Unit
 ) {
-    val listState = rememberLazyListState()
-    LaunchedEffect(key1 = tabId) {
-        viewModel.getArticles(tabId)
+    LaunchedEffect(key1 = tabId, key2 = selectedCountry) {
+        selectedCountry?.let { viewModel.getArticles(country = it, categoryId = tabId) }
     }
+
     val articles by viewModel.articles.collectAsStateWithLifecycle()
     when (articles) {
         is Default -> {}
@@ -99,26 +135,24 @@ fun ArticleTab(
                 CircularProgressIndicator()
             }
         }
+
         is Success -> {
-            val list = (articles as Success<List<ArticleUIModel>>).response.filter { it.title != "[Removed]" }
-            ArticlesList(articles = list, articleClicked = articleClicked, listState)
+            val list =
+                (articles as Success<List<ArticleUIModel>>).response.filter { it.title != "[Removed]" }
+            ArticlesList(articles = list, articleClicked = articleClicked)
         }
     }
-
-
 }
 
 @Composable
 fun ArticlesList(
     articles: List<ArticleUIModel>,
     articleClicked: (ArticleUIModel) -> Unit,
-    listState: LazyListState
 ) {
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(8.dp),
-        state = listState
+        contentPadding = PaddingValues(8.dp)
     ) {
         items(articles) { article ->
             ArticleItem(article = article, articleClicked = { articleClicked(article) })
