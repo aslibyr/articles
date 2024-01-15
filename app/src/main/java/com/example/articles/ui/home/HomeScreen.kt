@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Filter
@@ -23,6 +24,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.articles.R
 import com.example.articles.custom.bottom_sheet.BottomModalSheet
+import com.example.articles.custom.buttons.ListResetButton
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
 import com.example.articles.domain.Default
@@ -45,6 +52,8 @@ import com.example.articles.ui.MainActivity
 import com.example.articles.utils.Constant
 import com.example.articles.utils.findActivity
 import com.example.articles.utils.getCountryList
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,13 +149,38 @@ fun ArticlesList(
     articles: List<ArticleUIModel>,
     articleClicked: (ArticleUIModel) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    var isScrollButtonVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(key1 = listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collectLatest { index ->
+                if (index != null && isScrollButtonVisible != listState.firstVisibleItemIndex > 0) {
+                    isScrollButtonVisible = listState.firstVisibleItemIndex > 0
+                }
+            }
+    }
+    Box(modifier = Modifier.fillMaxSize()){
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(8.dp)
-    ) {
-        items(articles) { article ->
-            ArticleItem(article = article, articleClicked = { articleClicked(article) })
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(8.dp),
+            state = listState
+        ) {
+            items(articles) { article ->
+                ArticleItem(article = article, articleClicked = { articleClicked(article) })
+            }
+        }
+
+        if(isScrollButtonVisible) {
+            ListResetButton{
+                scope.launch {
+                    isScrollButtonVisible = false
+                    listState.animateScrollToItem(0)
+                }
+            }
         }
     }
 }
