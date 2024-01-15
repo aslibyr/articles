@@ -23,10 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,40 +45,35 @@ import com.example.articles.ui.MainActivity
 import com.example.articles.utils.Constant
 import com.example.articles.utils.findActivity
 import com.example.articles.utils.getCountryList
-import com.example.articles.utils.getTabList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
+fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit,viewModel: HomeViewModel = hiltViewModel()) {
 
 
     val context = LocalContext.current
-    val tabItems = getTabList()
+    LaunchedEffect(key1 = Unit) {
+        (context.findActivity() as MainActivity).getSelectedCountry(Constant.SELECTED_COUNTRY)?.let {selectedCountry ->
+            viewModel.updateUIEvents(HomeScreenUIState.SelectedCountry(selectedCountry))
 
-    var tabIndex by rememberSaveable {
-        mutableIntStateOf(0)
+        }
     }
-    var selectedCountry by rememberSaveable {
-        mutableStateOf((context.findActivity() as MainActivity).getSelectedCountry(Constant.SELECTED_COUNTRY))
-    }
+    val uiState by viewModel.uiStates.collectAsStateWithLifecycle()
 
-    var showBottomSheet by rememberSaveable {
-        mutableStateOf(false)
-    }
-    if (showBottomSheet) {
+    if (uiState.showBottomSheet) {
         BottomModalSheet(
             onDismissRequest = {
-            showBottomSheet = false
+                viewModel.updateUIEvents(HomeScreenUIState.UpdateBottomSheetState(false))
         },
             items = getCountryList(),
             itemClicked = { selected ->
-            selectedCountry = selected
+                viewModel.updateUIEvents(HomeScreenUIState.SelectedCountry(selected))
             (context.findActivity() as MainActivity).setSelectedCountry(
                 Constant.SELECTED_COUNTRY,
                 selected
             )
         },
-            selectedCountry = selectedCountry
+            selectedCountry = uiState.selectedCountry
         )
     }
 
@@ -98,18 +89,18 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
                 endIcon = Icons.Default.Filter,
             ),
             onEndIconClick = {
-                showBottomSheet = !showBottomSheet
+                viewModel.updateUIEvents(HomeScreenUIState.UpdateBottomSheetState(true))
             }
         )
-        ScrollableTabRow(selectedTabIndex = tabIndex) {
-            tabItems.forEachIndexed { index, item ->
+        ScrollableTabRow(selectedTabIndex = uiState.tabIndex) {
+            uiState.tabItems.forEachIndexed { index, item ->
                 Tab(text = { Text(item.title) },
-                    selected = tabIndex == index,
-                    onClick = { tabIndex = index }
+                    selected = uiState.tabIndex == index,
+                    onClick = { viewModel.updateUIEvents(HomeScreenUIState.UpdateTabIndex(index)) }
                 )
             }
         }
-      ArticleTab(tabId = tabItems[tabIndex].id, articleClicked = articleClicked, selectedCountry = selectedCountry)
+      ArticleTab(tabId = uiState.tabItems[uiState.tabIndex].id, articleClicked = articleClicked, selectedCountry = uiState.selectedCountry)
     }
 
 }
@@ -118,7 +109,7 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit) {
 fun ArticleTab(
     tabId: String,
     selectedCountry : String?,
-    viewModel: HomeViewModel = hiltViewModel(key = tabId),
+    viewModel: ArticleTabViewModel = hiltViewModel(key = tabId),
     articleClicked: (ArticleUIModel) -> Unit
 ) {
     LaunchedEffect(key1 = tabId, key2 = selectedCountry) {
