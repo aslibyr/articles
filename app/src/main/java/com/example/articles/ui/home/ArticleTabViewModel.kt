@@ -7,6 +7,7 @@ import com.example.articles.domain.Loading
 import com.example.articles.domain.mapper.ArticleUIModel
 import com.example.articles.domain.usecase.GetArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +22,7 @@ class ArticleTabViewModel @Inject constructor(private val getArticlesUseCase: Ge
 
 
     fun getArticles(country:String,categoryId: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
                 getArticlesUseCase.invoke(country,categoryId).collect { articles ->
                     _articles.emit(articles)
                 }

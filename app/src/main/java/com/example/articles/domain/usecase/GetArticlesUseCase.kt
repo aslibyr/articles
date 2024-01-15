@@ -1,6 +1,6 @@
 package com.example.articles.domain.usecase
 
-import com.example.articles.data.remote.repository.ExampleRepository
+import com.example.articles.data.remote.repository.ArticlesRepository
 import com.example.articles.domain.BaseUIModel
 import com.example.articles.domain.Error
 import com.example.articles.domain.Loading
@@ -12,19 +12,31 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetArticlesUseCase @Inject constructor(private val repository: ExampleRepository) {
-    operator fun invoke(country:String,categoryId : String): Flow<BaseUIModel<List<ArticleUIModel>>> {
+class GetArticlesUseCase @Inject constructor(private val repository: ArticlesRepository) {
+    operator fun invoke(
+        country: String,
+        categoryId: String
+    ): Flow<BaseUIModel<List<ArticleUIModel>>> {
         return flow {
             emit(
-                Loading())
-            emit(
-                when(val response = repository.getArticles(country,categoryId)){
-                    is ResultWrapper.GenericError -> Error(response.error.toString())
-                    ResultWrapper.Loading -> Loading()
-                    ResultWrapper.NetworkError -> Error("Network error")
-                    is ResultWrapper.Success -> Success(response.value.articles.map { it.toUIModel() })
-                }
+                Loading()
             )
+            repository.getArticles(country, categoryId).collect { response ->
+                when (response) {
+                    is ResultWrapper.GenericError -> {
+                        emit(Error(response.error.toString()))
+                    }
+
+                    ResultWrapper.Loading -> {}
+                    is ResultWrapper.NetworkError -> {
+                        emit(Error("Network Error"))
+                    }
+
+                    is ResultWrapper.Success -> emit(Success(response.value.map { article ->
+                        article.toUIModel()
+                    }))
+                }
+            }
         }
     }
 

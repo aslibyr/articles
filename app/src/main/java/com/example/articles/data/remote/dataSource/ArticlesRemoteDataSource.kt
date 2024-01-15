@@ -7,7 +7,7 @@ import com.example.articles.utils.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class ExampleDataSource @Inject constructor(
+class ArticlesRemoteDataSource @Inject constructor(
     private val webService: WebService
 ) {
     suspend fun getArticles(country:String,categoryId : String) : ResultWrapper<BaseResponse> = safeApiCall(Dispatchers.IO){
