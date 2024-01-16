@@ -42,14 +42,15 @@ import com.example.articles.custom.bottom_sheet.BottomModalSheet
 import com.example.articles.custom.buttons.ListResetButton
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
+import com.example.articles.domain.BaseError
 import com.example.articles.domain.Default
 import com.example.articles.domain.Empty
-import com.example.articles.domain.Error
 import com.example.articles.domain.Loading
 import com.example.articles.domain.Success
 import com.example.articles.domain.mapper.ArticleUIModel
 import com.example.articles.ui.MainActivity
 import com.example.articles.utils.Constant
+import com.example.articles.utils.ScreenRoutes
 import com.example.articles.utils.findActivity
 import com.example.articles.utils.getCountryList
 import kotlinx.coroutines.flow.collectLatest
@@ -57,15 +58,16 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit,viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(articleClicked: (String) -> Unit, viewModel: HomeViewModel = hiltViewModel()) {
 
 
     val context = LocalContext.current
     LaunchedEffect(key1 = Unit) {
-        (context.findActivity() as MainActivity).getSelectedCountry(Constant.SELECTED_COUNTRY)?.let {selectedCountry ->
-            viewModel.updateUIEvents(HomeScreenUIState.SelectedCountry(selectedCountry))
+        (context.findActivity() as MainActivity).getSelectedCountry(Constant.SELECTED_COUNTRY)
+            ?.let { selectedCountry ->
+                viewModel.updateUIEvents(HomeScreenUIState.SelectedCountry(selectedCountry))
 
-        }
+            }
     }
     val uiState by viewModel.uiStates.collectAsStateWithLifecycle()
 
@@ -73,15 +75,15 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit,viewModel: HomeViewModel
         BottomModalSheet(
             onDismissRequest = {
                 viewModel.updateUIEvents(HomeScreenUIState.UpdateBottomSheetState(false))
-        },
+            },
             items = getCountryList(),
             itemClicked = { selected ->
                 viewModel.updateUIEvents(HomeScreenUIState.SelectedCountry(selected))
-            (context.findActivity() as MainActivity).setSelectedCountry(
-                Constant.SELECTED_COUNTRY,
-                selected
-            )
-        },
+                (context.findActivity() as MainActivity).setSelectedCountry(
+                    Constant.SELECTED_COUNTRY,
+                    selected
+                )
+            },
             selectedCountry = uiState.selectedCountry
         )
     }
@@ -109,7 +111,11 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit,viewModel: HomeViewModel
                 )
             }
         }
-      ArticleTab(tabId = uiState.tabItems[uiState.tabIndex].id, articleClicked = articleClicked, selectedCountry = uiState.selectedCountry)
+        ArticleTab(
+            tabId = uiState.tabItems[uiState.tabIndex].id,
+            articleClicked = articleClicked,
+            selectedCountry = uiState.selectedCountry
+        )
     }
 
 }
@@ -117,9 +123,9 @@ fun HomeScreen(articleClicked: (ArticleUIModel) -> Unit,viewModel: HomeViewModel
 @Composable
 fun ArticleTab(
     tabId: String,
-    selectedCountry : String?,
+    selectedCountry: String?,
     viewModel: ArticleTabViewModel = hiltViewModel(key = tabId),
-    articleClicked: (ArticleUIModel) -> Unit
+    articleClicked: (String) -> Unit
 ) {
     LaunchedEffect(key1 = tabId, key2 = selectedCountry) {
         selectedCountry?.let { viewModel.getArticles(country = it, categoryId = tabId) }
@@ -129,7 +135,7 @@ fun ArticleTab(
     when (articles) {
         is Default -> {}
         is Empty -> {}
-        is Error -> {}
+        is BaseError -> {}
         is Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -147,7 +153,7 @@ fun ArticleTab(
 @Composable
 fun ArticlesList(
     articles: List<ArticleUIModel>,
-    articleClicked: (ArticleUIModel) -> Unit,
+    articleClicked: (String) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -162,7 +168,7 @@ fun ArticlesList(
                 }
             }
     }
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize()) {
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -170,12 +176,19 @@ fun ArticlesList(
             state = listState
         ) {
             items(articles) { article ->
-                ArticleItem(article = article, articleClicked = { articleClicked(article) })
+                ArticleItem(article = article, articleClicked = {
+                    articleClicked(
+                        ScreenRoutes.DETAIL_SCREEN_ROUTE.replace(
+                            oldValue = "{id}",
+                            newValue = article.id
+                        )
+                    )
+                })
             }
         }
 
-        if(isScrollButtonVisible) {
-            ListResetButton{
+        if (isScrollButtonVisible) {
+            ListResetButton {
                 scope.launch {
                     isScrollButtonVisible = false
                     listState.animateScrollToItem(0)

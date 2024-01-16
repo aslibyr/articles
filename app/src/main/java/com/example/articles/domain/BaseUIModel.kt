@@ -8,4 +8,4 @@ class Default<T> : BaseUIModel<T>()
 
 data class Success<T>(val response : T) : BaseUIModel<T>()
 
-data class Error<T>(val errorMessage : String) : BaseUIModel<T>()
+data class BaseError<T>(val errorMessage: String) : BaseUIModel<T>()

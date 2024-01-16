@@ -46,4 +46,9 @@ class ArticlesRepository @Inject constructor(
             emit(ResultWrapper.Success(articlesLocalDataSource.getArticles(categoryId)))
         }
     }
+
+    fun getArticle(id: Int): ArticlesEntity {
+        return articlesLocalDataSource.getArticle(id)
+
+    }
 }

@@ -11,42 +11,62 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.articles.R
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
+import com.example.articles.domain.BaseError
+import com.example.articles.domain.Default
+import com.example.articles.domain.Empty
+import com.example.articles.domain.Loading
+import com.example.articles.domain.Success
 import com.example.articles.domain.mapper.ArticleUIModel
 import com.example.articles.utils.openChrome
 import com.example.articles.utils.theme.FontType
 
 @Composable
-fun DetailScreen(viewModel: DetailViewModel, onBackClick: () -> Unit) {
-    val article = viewModel.article
+fun DetailScreen(viewModel: DetailViewModel = hiltViewModel(), onBackClick: () -> Unit) {
+    val article by viewModel.article.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBarView(
-            model = TopBarComponentUIModel(
-                title = "Article Detail",
-                shouldShowBackIcon = true,
-                endIcon = if (article?.url.isNullOrEmpty()) null else Icons.Filled.Link
-            ),
-            onBackClick = onBackClick,
-            onEndIconClick = {
-                article?.url?.let { url ->
-                    context.openChrome(url)
-                }
+    when (article) {
+        is BaseError -> TODO()
+        is Default -> TODO()
+        is Empty -> TODO()
+        is Loading -> {
+
+        }
+
+        is Success -> {
+            val response = (article as Success<ArticleUIModel>).response
+            Column(modifier = Modifier.fillMaxSize()) {
+                TopBarView(
+                    model = TopBarComponentUIModel(
+                        title = "Article Detail",
+                        shouldShowBackIcon = true,
+                        endIcon = if (response.url.isNullOrEmpty()) null else Icons.Filled.Link
+                    ),
+                    onBackClick = onBackClick,
+                    onEndIconClick = {
+                        response.url?.let { url ->
+                            context.openChrome(url)
+                        }
+                    }
+                )
+                ArticleDetailUI(article = response)
             }
-        )
-        article?.let {
-            ArticleDetailUI(article = it)
         }
     }
+
+
 }
 
 @Composable

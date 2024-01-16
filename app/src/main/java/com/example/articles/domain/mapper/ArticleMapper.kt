@@ -29,7 +29,8 @@ fun ArticlesEntity.toUIModel() : ArticleUIModel{
         publishedAt = publishedAt,
         content = content,
         sourceId = sourceId,
-        sourceName = sourceName
+        sourceName = sourceName,
+        id = id.toString()
     )
 }
 
@@ -37,6 +38,7 @@ fun ArticlesEntity.toUIModel() : ArticleUIModel{
 
 
 data class ArticleUIModel(
+    val id: String,
     val author: String? = null,
     val title: String,
     val description: String,
