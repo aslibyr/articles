@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Filter
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -97,7 +97,7 @@ fun HomeScreen(articleClicked: (String) -> Unit, viewModel: HomeViewModel = hilt
             model = TopBarComponentUIModel(
                 title = "Articles",
                 shouldShowBackIcon = false,
-                endIcon = Icons.Default.Filter,
+                endIcon = Icons.Default.Language,
             ),
             onEndIconClick = {
                 viewModel.updateUIEvents(HomeScreenUIState.UpdateBottomSheetState(true))
