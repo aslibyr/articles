@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.articles.utils.theme.Pink40
 
 @Composable
 fun TopBarView(
@@ -56,13 +56,15 @@ fun TopBarView(
                             onBackClick()
                         }
                         .height(IntrinsicSize.Min),
+                    tint = Pink40
+
                 )
             }
 
             Text(
                 text = model.title,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.secondary,
+                color = Pink40,
                 modifier = Modifier.align(Alignment.Center),
                 style = TextStyle(
                     fontSize = 14.sp
@@ -80,7 +82,7 @@ fun TopBarView(
                             onEndIconClick()
                         }
                         .align(Alignment.TopEnd),
-                    tint = MaterialTheme.colorScheme.secondary
+                    tint = Pink40
                 )
             }
         }

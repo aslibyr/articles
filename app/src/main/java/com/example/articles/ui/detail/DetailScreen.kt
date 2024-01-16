@@ -109,9 +109,8 @@ fun ArticleDetailUI(article: ArticleUIModel) {
                 fontFamily = FontType.workSansBold
             )
         )
-        Text(text = article.content, fontFamily = FontType.workSansRegular, fontSize = 14.sp)
-
-
+        if (article.content.isNotEmpty()) {
+            Text(text = article.content, fontFamily = FontType.workSansRegular, fontSize = 14.sp)
+        }
     }
-
 }

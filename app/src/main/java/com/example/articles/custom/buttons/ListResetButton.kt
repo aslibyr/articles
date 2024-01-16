@@ -14,11 +14,12 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.articles.utils.theme.Pink40
 
 
 @Composable
@@ -40,7 +41,7 @@ fun BoxScope.ListResetButton(
                 onClick.invoke()
             },
         elevation = CardDefaults.cardElevation(10.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(Pink40)
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
@@ -48,7 +49,7 @@ fun BoxScope.ListResetButton(
                 contentDescription = "Scroll to Top",
                 modifier = Modifier
                     .size(32.dp),
-                tint = MaterialTheme.colorScheme.secondary
+                tint = Color.White
             )
         }
     }

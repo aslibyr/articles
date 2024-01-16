@@ -1,5 +1,7 @@
 package com.example.articles.ui.home
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +19,10 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +43,7 @@ import coil.compose.AsyncImage
 import com.example.articles.R
 import com.example.articles.custom.bottom_sheet.BottomModalSheet
 import com.example.articles.custom.buttons.ListResetButton
+import com.example.articles.custom.tab.CustomTab
 import com.example.articles.custom.top_bar.TopBarComponentUIModel
 import com.example.articles.custom.top_bar.TopBarView
 import com.example.articles.domain.BaseError
@@ -53,6 +57,8 @@ import com.example.articles.utils.Constant
 import com.example.articles.utils.ScreenRoutes
 import com.example.articles.utils.findActivity
 import com.example.articles.utils.getCountryList
+import com.example.articles.utils.theme.Pink40
+import com.example.articles.utils.theme.Pink80
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -103,12 +109,24 @@ fun HomeScreen(articleClicked: (String) -> Unit, viewModel: HomeViewModel = hilt
                 viewModel.updateUIEvents(HomeScreenUIState.UpdateBottomSheetState(true))
             }
         )
-        ScrollableTabRow(selectedTabIndex = uiState.tabIndex) {
-            uiState.tabItems.forEachIndexed { index, item ->
-                Tab(text = { Text(item.title) },
-                    selected = uiState.tabIndex == index,
-                    onClick = { viewModel.updateUIEvents(HomeScreenUIState.UpdateTabIndex(index)) }
+
+        ScrollableTabRow(selectedTabIndex = uiState.tabIndex, divider = {},
+            indicator = {
+                Divider(
+                    modifier = Modifier
+                        .tabIndicatorOffset(it[uiState.tabIndex])
+                        .border(BorderStroke(2.dp, Pink40))
                 )
+            }) {
+            uiState.tabItems.forEachIndexed { index, item ->
+                CustomTab(onClick = {
+                    viewModel.updateUIEvents(
+                        HomeScreenUIState.UpdateTabIndex(
+                            index
+                        )
+                    )
+                }, text = item.title, modifier = Modifier)
+
             }
         }
         ArticleTab(
@@ -117,7 +135,6 @@ fun HomeScreen(articleClicked: (String) -> Unit, viewModel: HomeViewModel = hilt
             selectedCountry = uiState.selectedCountry
         )
     }
-
 }
 
 @Composable
@@ -204,8 +221,9 @@ fun ArticleItem(article: ArticleUIModel, articleClicked: () -> Unit) {
         modifier = Modifier.clickable { articleClicked() },
         elevation = CardDefaults.cardElevation(5.dp),
         shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Pink80)
 
-        ) {
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)

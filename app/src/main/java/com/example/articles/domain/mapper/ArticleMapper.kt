@@ -11,7 +11,7 @@ fun ArticleResponse.toEntity(category : String) : ArticlesEntity{
         url = url,
         urlToImage = urlToImage,
         publishedAt = publishedAt.toString(),
-        content = content.toString(),
+        content = content ?: "",
         sourceId = source?.id.toString(),
         sourceName = source?.name.toString(),
         category = category

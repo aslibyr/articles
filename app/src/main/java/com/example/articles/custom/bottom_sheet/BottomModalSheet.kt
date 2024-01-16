@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import com.example.articles.R
 import com.example.articles.utils.TabItemModel
 import com.example.articles.utils.theme.FontType
+import com.example.articles.utils.theme.Pink40
+import com.example.articles.utils.theme.Pink80
 
 @ExperimentalMaterial3Api
 @Composable
@@ -96,7 +98,9 @@ fun ModalBottomSheetItem(
                 onItemClicked.invoke()
             },
         elevation = CardDefaults.cardElevation(5.dp),
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(15.dp),
+        colors = CardDefaults.cardColors(Pink80)
+
     ) {
         Row(
             Modifier.fillMaxSize(),
@@ -129,7 +133,9 @@ fun ModalBottomSheetItem(
                     contentDescription = "",
                     modifier = Modifier
                         .size(32.dp)
-                        .padding(end = 16.dp)
+                        .padding(end = 16.dp),
+                    tint = Pink40
+
                 )
             }
 
