@@ -50,7 +50,7 @@ fun DetailScreen(viewModel: DetailViewModel = hiltViewModel(), onBackClick: () -
             Column(modifier = Modifier.fillMaxSize()) {
                 TopBarView(
                     model = TopBarComponentUIModel(
-                        title = "Article Detail",
+                        title = "Haber Detay",
                         shouldShowBackIcon = true,
                         endIcon = if (response.url.isNullOrEmpty()) null else Icons.Filled.Link
                     ),

@@ -101,7 +101,7 @@ fun HomeScreen(articleClicked: (String) -> Unit, viewModel: HomeViewModel = hilt
     ) {
         TopBarView(
             model = TopBarComponentUIModel(
-                title = "Articles",
+                title = "Haberler",
                 shouldShowBackIcon = false,
                 endIcon = Icons.Default.Language,
             ),
@@ -155,7 +155,7 @@ fun ArticleTab(
         is BaseError -> {}
         is Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = Pink40)
             }
         }
 
